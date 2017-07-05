@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    </head>
+    <body>
+        <div class = "show admin field column1">
+        <div class = "show admin">
+            
+        <button id ="showadmin"> show users</button>
+        </div>
+        <input type = "text" id="adminSuggestion">
+        </div>
+        <div id = "showadminField" class = "show admin field">
+        </div>
+        <p>testing hashes</p>
+        <div id = "testHash" class="column2">
+        <input type="text" id= "writePass">
+        <button id = "checkHash">hash this</button>
+        <div id="hashed"></div>
+        </div>
+        <div class = "create">
+        <button id ="createadmin"></button>
+        </div>        
+        <script>
+var arrChoice = ['showadmin','newadmin'];
+function showUser(str, choice) {
+    console.log("in");
+    if (str == "") {
+        document.getElementById(choice+"Field").innerHTML = str;
+        //return;
+    } else {
+        console.log("go!"); 
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log("allmost");
+                document.getElementById(choice+"Field").innerHTML = this.responseText;
+                console.log("success");
+            }
+        };
+        xmlhttp.open("GET","checkadmin.php?q="+str,true);
+        xmlhttp.send();
+    }
+}
+window.addEventListener('load', function(){
+    console.log("loaded");
+    var typedPass = $('#writePass').val();
+    var p = $('#adminSuggestion').val();
+    console.log("parameter" + p);
+    document.getElementById('showadmin').addEventListener('click',function(){
+      p = $('#adminSuggestion').val();
+      console.log("par:" +p );
+      console.log("clicked");
+      $.post("checkadmin.php", {q:p}, function(data){
+         $("#showadminField").html(data);
+
+      });
+      // the check hash place
+     $.post("testHashing.php", {kur1:typedPass}, function(something){
+         $('#hashed').html(something);
+     });
+
+
+        //showUser(q, arrChoice[0]);
+        console.log("empty list");
+    
+    });
+    document.getElementById('adminSuggestion').addEventListener('keyup',function(){
+        //showUser(q, arrChoice[0]);
+         p = $('#adminSuggestion').val();
+        console.log("list");
+        $.post("checkadmin.php", {q:p}, function(data){
+         $("#showadminField").html(data);
+
+      });   
+    });
+
+    //testing hashing passwords in php with password_hash()
+
+    $('#checkHash').on('click', function(){
+       $.post("testHashing.php", {kur1:typedPass}, function(something){
+          $('#hashed').html(something);
+       });
+    });
+
+    
+});
+
+
+</script>
+    </body>
+</html>
